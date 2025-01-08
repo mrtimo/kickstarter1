@@ -1,0 +1,40 @@
+source: kick is duckdb.table("./kickstarter-campaigns1.csv") extend {
+
+}
+
+
+run: kick -> {
+    group_by: `Created At Weekday`
+    aggregate: avg_don is avg(PledgedUSD)
+}
+
+run: kick -> {
+    group_by: `Staff Pick`
+    aggregate: avg_don is avg(PledgedUSD)
+    --where: `Staff Pick` = true
+}
+
+run: kick -> {
+    group_by: `Staff Pick`
+    aggregate: avg_don is avg(`Blurb Len`)
+    aggregate: avg_camp_len is avg(CampaignLength)
+    aggregate: avg_goal is avg(Goal)
+    --where: `Staff Pick` = true
+}
+# bar_chart
+run: kick -> {
+    group_by: Category
+    aggregate: avg_don is avg(PledgedUSD)
+    --group_by: Spotlight
+    --where: `Spotlight` = true
+}
+
+# bar_chart
+run: kick -> {
+    group_by: Status
+    aggregate: avg_backers is avg(Backers)
+   
+}
+
+
+
