@@ -1,0 +1,79 @@
+>>>markdown
+Use this notebook to answer the questions
+>>>malloy
+import "kickstarter.malloy"
+>>>markdown
+# Kickstarter Analysis Questions
+
+## 1. Which day of the week leads to the greatest average donations?
+* _Example approach to answering_: Compare average donation amounts across each day of the week (Monday, Tuesday, etc.) and identify which day is highest.
+>>>malloy
+run: kick -> {
+    group_by: `Created At Weekday`
+    aggregate: avg_don is avg(PledgedUSD)
+}
+>>>markdown
+## 2. Does being a staff pick affect the average number of backers?
+* _Example approach to answering_: Compare the average number of backers for staff-picked projects vs. those that are not staff-picked.
+>>>malloy
+run: kick -> {
+    group_by: `Staff Pick`
+    aggregate: avg_don is avg(PledgedUSD)
+    --where: `Staff Pick` = true
+}
+>>>markdown
+## 3. Do any of the following seem to be related to becoming a staff pick?
+   - Average Campaign Length
+   - Average Blurb Length
+   - Average Goal
+* _Example approach to answering_: Examine correlations or relationships between these factors and staff-pick status.
+>>>malloy
+run: kick -> {
+    group_by: `Staff Pick`
+    aggregate: avg_don is avg(`Blurb Len`)
+    aggregate: avg_camp_len is avg(CampaignLength)
+    aggregate: avg_goal is avg(Goal)
+    --where: `Staff Pick` = true
+}
+>>>malloy
+# bar_chart
+run: kick -> {
+    group_by: Status
+    aggregate: avg_backers is avg(Backers)
+   
+}
+>>>markdown
+## 4. For which category was it better (in terms of average pledge amount) to not be spotlighted?
+* _Example approach to answering_: Look at average pledge amounts for spotlighted vs. non-spotlighted projects, grouped by category. Identify if any category fares better without spotlight.
+>>>malloy
+--# bar_chart
+run: kick -> {
+    group_by: Category
+    aggregate: Pledged_Spot is avg(PledgedUSD) {where: Spotlight = "True" }
+    aggregate: Pledged_NoSpot is avg(PledgedUSD) {where: Spotlight = "False" }
+}
+>>>markdown
+
+## 5. Why do campaigns fail? 
+\> **Hint**: Look at the average backers by status.
+
+* _Example approach to answering_: Compare successful vs. failed campaigns in terms of average backers. Determine if low backer counts correlate with failure.
+>>>malloy
+# bar_chart
+run: kick -> {
+    group_by: Status
+    aggregate: avg_backers is avg(Backers)
+   
+}
+>>>markdown
+
+## 6. Which category had the greatest average pledged as a percent of their goal?
+\> **Hint**: Create a new field as:  
+\> \[
+\> 100 \times \frac{\text{pledged}}{\text{goal}}
+\> \]
+
+* _Example approach to answering_: Calculate pledged/goal * 100 for each category, then find which category has the highest average percentage.
+>>>markdown
+## 7. From 2009 until the end of 2016, what is the general trend in the total number of backers?
+* _Example approach to answering_: Plot or aggregate the total number of backers per year and observe the pattern or trend over time.
